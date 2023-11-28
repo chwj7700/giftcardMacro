@@ -26,10 +26,6 @@ class GiftCardPin():
         loginBtn.click()
         sleep(1)
 
-        WebDriverWait(self.driver, 3).until(EC.alert_is_present())
-        self.alert = self.driver.switch_to.alert
-        self.alert.accept()
-
 
         for cookie in self.driver.get_cookies():
             session.cookies.update({cookie['name']: cookie['value']})
