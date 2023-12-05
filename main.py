@@ -26,8 +26,10 @@ app.add_middleware(
 def printHello():
     return "Hello World"
 
-# terminal_command = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --user-data-dir="~/ChromeProfile"' #애플
-# terminal_command = 'google-chrome --remote-debugging-port=9222  --user-data-dir=data_dir' #리눅스
+terminal_command = r'/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --user-data-dir="~/ChromeProfile"' #애플
+subprocess.Popen(terminal_command, shell=True);
+# subprocess.call(terminal_command, shell=True);
+# # terminal_command = 'google-chrome --remote-debugging-port=9222  --user-data-dir=data_dir' #리눅스
 # def target() :
 #     proc = subprocess.call(terminal_command, shell=True);
 # thread = threading.Thread(target=target)

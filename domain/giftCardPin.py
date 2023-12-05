@@ -36,7 +36,7 @@ class GiftCardPin():
         txStates = soup.select('.tx_state')
         availCnt = 0
         for txState in txStates:
-            availCnt += 1 if txState.getText().find('사용완료') != -1 else 0
+            availCnt += 1 if txState.getText().find('사용가능') != -1 else 0
         print(availCnt)
 
         pinSeqEls = soup.select('.codr_btn_ssgcon.codr-tooltip')

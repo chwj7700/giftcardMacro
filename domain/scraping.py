@@ -15,6 +15,16 @@ import psutil
 def createDriver():
     # try:
         # 크롬드라이버 다운로드시 https ssl 인증서 문제 해결
+        # terminal_command = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222 --user-data-dir="~/ChromeProfile"' #애플
+        # terminal_command = 'google-chrome --remote-debugging-port=9222  --user-data-dir=data_dir' #리눅스
+
+        # subprocess.call(terminal_command, shell=True);
+        # def target() :
+        # subprocess.Popen(terminal_command);
+        # thread = threading.Thread(target=target)
+        # thread.start()
+        # sleep(3)
+
         ssl._create_default_https_context = ssl._create_unverified_context
         path = chromedriver_autoinstaller.install()
         print(chromedriver_autoinstaller.get_chrome_version())
@@ -25,8 +35,8 @@ def createDriver():
         # service = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         # options = webdriver.ChromeOptions()
         options = Options()
-        # options.add_experimental_option("debuggerAddress", "localhost:9222")
-        options.add_experimental_option("detach", True)  # 브라우저 꺼짐 방지 옵션
+        options.add_experimental_option("debuggerAddress", "localhost:9222")
+        # options.add_experimental_option("detach", True)  # 브라우저 꺼짐 방지 옵션
         # chrome_driver = '/Applications/Google\ Chrome.app/Contents/MacOS/Google'
         # options.add_argument('--window-size=100,100') # 창 크기 설정
         

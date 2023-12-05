@@ -9,7 +9,7 @@ from time import sleep
 router = APIRouter(prefix="/charge", tags=["charge"])
 
 @router.post('/hm')
-def charge(hmChargeDto:  HmChargeDto):
+async def charge(hmChargeDto:  HmChargeDto):
     try:
         id = hmChargeDto.id
         password = hmChargeDto.password
@@ -42,12 +42,11 @@ async def charge(clChargeDto:  ClChargeDto):
         clCharge = ClCharge(driver).login(id, password)
         splitedPins = '-'.join(pins).split('-')
 
-        await clCharge.charge(splitedPins)
+        clCharge.charge(splitedPins)
             #while (len(pins)):  # TODO 충전도중에 죽으면?
             #    splitedPins = '-'.join(pins).replace('_', '-').split('-')
             #    result = clCharge.charge(splitedPins).result()
             #    pins = pins[10:]
     finally:
-    #   driver.close()
-        pass
+        driver.close()
     return result
