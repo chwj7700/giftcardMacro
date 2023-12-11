@@ -4,13 +4,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver import support as support
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from pytesseract import *
 from time import sleep
 import requests
 from io import BytesIO
 from PIL import Image
 import numpy as np
-
 import random
 
 class ClCharge():
@@ -73,37 +71,31 @@ class ClCharge():
         # })
 
 
-        self.driver.get(url='https://m.cultureland.co.kr/mmb/loginMain.do')
+        self.driver.get(url='https://www.cultureland.co.kr/signin/login.do')
 
-        self.driver.script("document.querySelector('#txtUserId').value='"+id+"'")
-        self.driver.script("mtk.onKeyboard(document.querySelector('#passwd'))")
+        self.driver.find_element(By.ID, 'userId').send_keys('a')
+        sleep(0.1)
+        for i in id:
+            # self.driver.script("EnKeyMatch()")
+            # sleep(0.1)
+            self.driver.find_element(By.ID, 'userId').send_keys(i)
+            # sleep(0.1)
+            # self.driver.script("EnKeyMatch()")
+            sleep(0.1)
 
-        self.lowerText = self.driver.script("return mtk.talkBackLowerText")
-        self.upperText = self.driver.script("return mtk.talkBackLowerText.map(e=> String(e).toUpperCase())")
-        self.specialText = ['`', '~', '!', '@', '#', '$', '%', '^', '&', '*',
-                    '(', ')', '-', '_', '=', '+', '[', '{', ']', '}', '\\', '|', ';', ':', '/', '?', ',', '<', '.', '>', '\'', '\"', '+', '-', '*', '/']
-        self.dkis = self.getDkis()
-
-        for dki in self.dkis:
-            self.lowerText.insert(int(dki), ' ')
-            self.upperText.insert(int(dki), ' ')
-            self.specialText.insert(int(dki), ' ')
-
-        for idx, p in enumerate(password):
-            if p in self.lowerText:
-                self.driver.script("mtk.now.setKeyType('lower')")
-                idx = self.lowerText.index(p)
-            elif p in self.upperText:
-                self.driver.script("mtk.now.setKeyType('upper')")
-                idx = self.upperText.index(p)
-            elif p in self.specialText:
-                self.driver.script("mtk.now.setKeyType('special')")
-                idx = self.specialText.index(p)
-            # sleep(random.random())
-            self.driver.script("mtk.now.hidden.value += transkey_delimiter + mtk.getEncData('"+str(idx)+"')")
-            self.driver.script("document.querySelector('#passwd').value+='" + p + "'")
-        self.driver.script("mtk.done(document.querySelector('#passwd'))")
-        self.driver.script("document.querySelector('#btnLogin').click()")
+        # self.driver.script("document.querySelector('#userId').value='"+id+"'")
+        sleep(1)
+        self.driver.find_element(By.ID, 'userPwd').send_keys('c')
+        sleep(0.1)
+        for p in password:
+            # self.driver.script("EnKeyMatch()")
+            # sleep(0.1)
+            sleep(0.1)
+            self.driver.find_element(By.ID, 'userPwd').send_keys(p)
+            sleep(0.1)
+            # self.driver.script("EnKeyMatch()")
+            # sleep(0.1)
+        self.driver.script("document.querySelector('.btn-cont').children[1].click()")
         sleep(10)
         # self.driver.switch_to.frame(2)
         # WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'service_1')))
@@ -111,58 +103,23 @@ class ClCharge():
 
 
     def charge(self, pins):
-        self.driver.get(url=f'https://m.cultureland.co.kr/csh/cshGiftCard.do')
-        self.driver.script("document.querySelector('#addForm').click()")
+        self.driver.get(url=f'https://www.cultureland.co.kr/charge/gift/getCulVoucher.do')
+        self.driver.script("document.querySelector('#frm > fieldset > div > button.btn.minimal.ml-at.stock-open').click()")
 
-        self.inpTxts = self.driver.script("return document.querySelectorAll('.scr,.scrPwd')")
-        print(self.inpTxts)
+        self.inpTxts = self.driver.script("return document.querySelectorAll('.InFld')")
+
         for idx, inpTxt in enumerate(self.inpTxts):
             if idx >= len(pins) : break
 
             self.pin = pins[idx]
             self.inpTxtId = inpTxt.get_attribute('id')
-            if(idx % 4 == 3):
-                self.driver.script("mtk.onKeyboard(document.querySelector('#"+self.inpTxtId+"'))")
-                imgUrl = self.driver.script("return document.querySelector('.dv_transkey_div2_2').style.backgroundImage.replace(/^url\(['\"](.+)['\"]\)/, '$1')")
-
-                response = requests.get(imgUrl)
-
-                # Img open
-                img = Image.open(BytesIO(response.content))
-                img = img.resize((500,455))
-                # img.show()
-                left, top, right, bottom = 0, 0, 125, 112
-                keypad = []
-                for i in range(0,3):
-                    for j in range(0,4):
-                        img_cropped = img.crop((left + (j*125), top + (i*112), right + (j*125), bottom + (i*112)))
-                        # img_cropped.show()
-                        # image_nparray = np.array(img_cropped).flatten().tolist()
-                        text = pytesseract.image_to_string(img_cropped, config='--psm 6')
-                        keypad.append(text.replace('\n',''))
-                        
-
-                for p in self.pin:
-                    print(p)
-                    idx = keypad.index(p)
-                    self.driver.script("mtk.now.hidden.value += transkey_delimiter + mtk.getEncData('"+str(idx)+"')")
-                    self.driver.script("document.querySelector('#" + self.inpTxtId + "').value+='" + p + "'")
-                self.driver.script("document.querySelector('.dv_transkey_div_b').click()")
-
-            else:
-                print('test')
-                print(self.inpTxtId )
-                print(str(self.pin))
-                # self.driver.find_element(By.ID, self.inpTxtId).send_keys('')
-                self.driver.script("document.querySelector('#" + self.inpTxtId + "').setAttribute('type','text')")
-                sleep(0.5)
-                self.driver.script("document.querySelector('#" + self.inpTxtId + "').value = '" + str(self.pin) + "'")
-            sleep(0.5)
+            self.driver.script("document.querySelector('#" + self.inpTxtId + "').value = " + self.pin)
             
-        self.driver.script("document.querySelector('#btnCshFrom').click()")
-        
-        sleep(3)
-
+        self.driver.script("charge()")
+        # WebDriverWait(self.driver, 3).until(EC.alert_is_present())
+        # self.alert = self.driver.switch_to.alert
+        # self.alert.accept()
+        sleep(5)
         # WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'chargeDatail')))
         return self
     
@@ -173,8 +130,8 @@ class ClCharge():
         for chargeResult in self.chargeResults:
             rowData = chargeResult.split('\t')
             self.rslt.append({'number': rowData[0],
-                                'orderNumber': rowData[0],\
-                                'pin': rowData[1],\
-                                'chargeResult': rowData[2],\
-                                'amt': rowData[3]})
+                                'orderNumber': rowData[1],\
+                                'pin': rowData[2] + '_' + rowData[3],\
+                                'chargeResult': rowData[4],\
+                                'amt': rowData[5]})
         return self.rslt
