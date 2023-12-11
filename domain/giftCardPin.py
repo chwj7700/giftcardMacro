@@ -47,11 +47,11 @@ class GiftCardPin():
             pinSoup = BeautifulSoup(pinResponse.text, 'html.parser')
             print(pinSoup.select_one('#barcodeNumber').getText().strip())
             print(pinSoup.select_one('.mnodr_unit_brd').getText().strip())
-            print(str(txStates[idx]).strip())
+            print(txStates[idx].getText().replace('\n','').replace('\r','').replace('\t','').replace('\xa0',''))
             print(idx)
             self.rslt.append({'pin' : pinSoup.select_one('#barcodeNumber').getText().strip(),
                               'title' : pinSoup.select_one('.mnodr_unit_brd').getText().strip(),
-                              'status' : str(txStates[idx]).strip()})
+                              'status' : txStates[idx].getText().replace('\n','').replace('\r','').replace('\t','').replace('\xa0','')})
             # if idx == availCnt -1:
             #     break
             if idx > 19:
