@@ -154,14 +154,12 @@ class ClCharge():
                 print(self.inpTxtId )
                 print(str(self.pin))
                 # self.driver.find_element(By.ID, self.inpTxtId).send_keys('')
-                self.driver.script("document.querySelector('#" + self.inpTxtId + "').setAttribute('type','text')")
-                sleep(0.5)
                 self.driver.script("document.querySelector('#" + self.inpTxtId + "').value = '" + str(self.pin) + "'")
             sleep(0.5)
             
         self.driver.script("document.querySelector('#btnCshFrom').click()")
         
-        sleep(3)
+        sleep(2)
 
         # WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, 'chargeDatail')))
         return self

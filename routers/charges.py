@@ -40,13 +40,14 @@ async def charge(clChargeDto:  ClChargeDto):
         result = []
         driver = createDriver()
         clCharge = ClCharge(driver).login(id, password)
-        splitedPins = '-'.join(pins).split('-')
+        # splitedPins = '-'.join(pins).split('-')
 
-        result = clCharge.charge(splitedPins).result()
-            #while (len(pins)):  # TODO 충전도중에 죽으면?
-            #    splitedPins = '-'.join(pins).replace('_', '-').split('-')
-            #    result = clCharge.charge(splitedPins).result()
-            #    pins = pins[10:]
+        # result = clCharge.charge(splitedPins).result()
+        while (len(pins)):  # TODO 충전도중에 죽으면?
+            currentPins = [pins[0]]
+            splitedPins = '-'.join(currentPins).replace('_', '-').split('-')
+            result = clCharge.charge(splitedPins).result()
+            pins = pins[1:]
     finally:
         driver.close()
     return result
