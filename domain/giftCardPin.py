@@ -35,8 +35,8 @@ class GiftCardPin():
         # Array.from(document.querySelectorAll('.tx_state')).filter(e=> e.innerText.search('사용가능') == 0).length
         txStates = soup.select('.tx_state')
         availCnt = 0
-        for txState in txStates:
-            availCnt += 1 if txState.getText().find('사용가능') != -1 else 0
+        # for txState in txStates:
+            # availCnt += 1 if txState.getText().find('사용완료') != -1 else 0
         print(availCnt)
 
         pinSeqEls = soup.select('.codr_btn_ssgcon.codr-tooltip')
@@ -47,12 +47,16 @@ class GiftCardPin():
             pinSoup = BeautifulSoup(pinResponse.text, 'html.parser')
             print(pinSoup.select_one('#barcodeNumber').getText().strip())
             print(pinSoup.select_one('.mnodr_unit_brd').getText().strip())
-             
+            print(str(txStates[idx]).strip())
+            print(idx)
             self.rslt.append({'pin' : pinSoup.select_one('#barcodeNumber').getText().strip(),
-                              'title' : pinSoup.select_one('.mnodr_unit_brd').getText().strip()})
-            if idx == availCnt -1:
+                              'title' : pinSoup.select_one('.mnodr_unit_brd').getText().strip(),
+                              'status' : str(txStates[idx]).strip()})
+            # if idx == availCnt -1:
+            #     break
+            if idx > 19:
                 break
-        
+        print(self.rslt)
         return self;
 
     def result(self):
